@@ -3565,7 +3565,7 @@ function getUnlockedDay(){
   const preview = new URLSearchParams(window.location.search).get("preview");
   if(preview !== null){
     const p = Math.max(0, Math.min(MAX_DAY, parseInt(preview, 10) || 0));
-    return p;
+    return p >= 29 ? MAX_DAY : p; // like 29 Oct: Day 30 opens together with Day 29
   }
 
   const d = getDhakaParts();
@@ -3584,7 +3584,9 @@ function getUnlockedDay(){
 // The day the archive lands on. On 29 Oct both Day 29 and Day 30 are open, but she should start at Day 29.
 function getLandingDay(){
   const u = getUnlockedDay();
-  if(u >= MAX_DAY && new URLSearchParams(window.location.search).get("preview") === null){
+  const pv = new URLSearchParams(window.location.search).get("preview");
+  if(pv !== null) return parseInt(pv, 10) === 29 ? 29 : u;
+  if(u >= MAX_DAY){
     const d = getDhakaParts();
     if(d.year === ARCHIVE_YEAR && d.month === ARCHIVE_MONTH && d.day === 29) return 29;
   }
